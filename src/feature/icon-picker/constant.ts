@@ -1,4 +1,4 @@
-enum HeroTag {
+export enum HeroTag {
   // Hero
   DVa = "D.Va",
   Roadhog = "Roadhog",
@@ -45,7 +45,7 @@ enum HeroTag {
   Freja = "Freja",
 }
 
-enum TypeTag {
+export enum TypeTag {
   HeroAvatar = "Hero Avatar",
   Ability = "Ability",
   Weapon = "Weapon",
