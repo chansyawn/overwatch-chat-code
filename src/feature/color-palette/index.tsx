@@ -1,9 +1,23 @@
 "use client";
 
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { useState } from "react";
+import { ButtonHTMLAttributes, useState } from "react";
 import ColorPicker from "react-best-gradient-color-picker";
 import { Editor } from "slate";
+
+const ColorButton = ({
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) => {
+  return (
+    <button
+      {...props}
+      className="size-6 rounded-lg border border-gray-300 flex items-center justify-center cursor-pointer bg-white"
+    >
+      {children}
+    </button>
+  );
+};
 
 const TextColorButton = ({
   color,
@@ -22,7 +36,7 @@ const TextColorButton = ({
   };
 
   return (
-    <button
+    <ColorButton
       onMouseDown={handleClick}
       style={{ background: color }}
       className="size-6 rounded-full border border-gray-300"
@@ -43,12 +57,9 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
   return (
     <div>
       <div className="flex gap-2 w-full flex-wrap">
-        <button
-          onClick={() => Editor.removeMark(editor, "color")}
-          className="size-6 rounded-full border border-gray-300 flex items-center justify-center "
-        >
+        <ColorButton onClick={() => Editor.removeMark(editor, "color")}>
           🚫
-        </button>
+        </ColorButton>
         {colors.map((color, idx) => (
           <TextColorButton
             key={`${color}_${idx}`}
@@ -57,8 +68,8 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
           />
         ))}
         <Popover className="relative">
-          <PopoverButton className="size-6 rounded-full border border-gray-300 flex items-center justify-center">
-            +
+          <PopoverButton as="div">
+            <ColorButton>+</ColorButton>
           </PopoverButton>
           <PopoverPanel
             anchor="bottom"

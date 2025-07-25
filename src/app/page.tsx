@@ -22,8 +22,10 @@ export default function App() {
 
   return (
     <div className="container mx-auto">
-      <main className="flex flex-col items-center">
-        <h1 className="text-2xl font-bold">Overwatch Chat Code Editor</h1>
+      <main className="flex flex-col items-center max-w-[800px] mx-auto gap-2">
+        <h1 className="text-5xl text-white font-bold mt-24">
+          Overwatch Chat Code
+        </h1>
         <ChannelPicker value={channel} onChange={setChannel} />
         <ChatCodeEditor channel={channel} value={value} onChange={setValue} />
         <ChatCodePreview value={value} channel={channel} />

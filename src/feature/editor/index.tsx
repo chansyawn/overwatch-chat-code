@@ -84,15 +84,15 @@ export const ChatCodeEditor = ({
   return (
     <div className="w-full flex flex-col gap-2">
       <Slate editor={editor} initialValue={value} onChange={onChange}>
-        <div className="flex flex-col gap-2">
-          <ColorPalette editor={editor} />
+        <div className="flex flex-wrap gap-2">
           <IconSelector editor={editor} />
+          <ColorPalette editor={editor} />
         </div>
         <Editable
           renderLeaf={renderLeaf}
           renderElement={renderElement}
           style={{ color: CHANNEL_COLOR[channel] }}
-          className="w-full border border-gray-300 rounded-md p-3 bg-gray-800 text-white min-h-96"
+          className="w-full border bg-gray-500/20 border-gray-500/30 p-4 rounded-xl min-h-96 outline-none"
         />
       </Slate>
     </div>

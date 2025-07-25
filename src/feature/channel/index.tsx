@@ -29,12 +29,12 @@ export const ChannelPicker = ({ value, onChange }: ChannelPickerProps) => {
           key={channel}
           onClick={() => onChange(channel)}
           className={clsx(
-            "border border-gray-300 flex items-center justify-center px-2 py-1 rounded-md bg-gray-600 cursor-pointer",
-            value === channel && "bg-gray-800"
+            "cursor-pointer border border-white/10 px-3 py-1 rounded-lg hover:bg-amber-300/20 transition-all duration-300 items-center",
+            value === channel ? "bg-amber-300/20" : "bg-slate-700/40"
           )}
           style={{ color: CHANNEL_COLOR[channel] }}
         >
-          {`[${channel}]`}
+          {channel}
         </button>
       ))}
     </div>
