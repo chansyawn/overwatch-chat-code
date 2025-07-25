@@ -25,7 +25,7 @@ export const ChannelPicker = ({ value, onChange }: ChannelPickerProps) => {
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm text-gray-400">Channel:</span>
-      <div className="flex gap-3 p-1 bg-gray-800/50 rounded-lg border border-gray-700/50">
+      <div className="flex gap-1 p-1 bg-gray-800/50 rounded-lg border border-gray-700/50">
         {Object.values(OverwatchChannel).map((channel) => (
           <button
             key={channel}

@@ -85,19 +85,21 @@ export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
     <div className="w-full">
       <Slate editor={editor} initialValue={value} onChange={onChange}>
         <div className="flex gap-6">
-          <div className="flex-1 space-y-4">
+          <div className="w-1/3 space-y-4 flex-shrink-0">
             <ChannelPicker value={channel} onChange={setChannel} />
             <ColorPalette editor={editor} />
-            <Editable
-              renderLeaf={renderLeaf}
-              renderElement={renderElement}
-              style={{ color: CHANNEL_COLOR[channel] }}
-              className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64 outline-none focus:border-gray-600/50 transition-colors"
-              placeholder="Type your message here..."
-            />
+            <div className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64">
+              <Editable
+                renderLeaf={renderLeaf}
+                renderElement={renderElement}
+                style={{ color: CHANNEL_COLOR[channel] }}
+                className="w-full h-full outline-none"
+                placeholder="Type your message here..."
+              />
+            </div>
             <ChatCodePreview value={value} channel={channel} />
           </div>
-          <div className="flex-2">
+          <div className="w-2/3">
             <IconSelector editor={editor} />
           </div>
         </div>
