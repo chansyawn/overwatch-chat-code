@@ -11,9 +11,10 @@ import {
 } from "slate-react";
 import { withHistory } from "slate-history";
 import { ColorPalette } from "../color-palette";
-import { IconSelector } from "../icon-picker";
 import { CHANNEL_COLOR, OverwatchChannel } from "../channel";
 import Image from "next/image";
+import { ICON_DATA, type IconData } from "../icon-picker/constant";
+import { Transforms } from "slate";
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   if (leaf.color) {
@@ -81,19 +82,54 @@ export const ChatCodeEditor = ({
     return <Element {...props} />;
   }, []);
 
+  const handleIconClick = useCallback((icon: IconData) => {
+    Transforms.insertNodes(editor, {
+      type: "icon",
+      icon,
+      children: [{ text: "" }],
+    });
+  }, [editor]);
+
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-4">
       <Slate editor={editor} initialValue={value} onChange={onChange}>
-        <div className="flex flex-wrap gap-2">
-          <IconSelector editor={editor} />
-          <ColorPalette editor={editor} />
+        <div className="flex gap-4">
+          {/* 左侧编辑器区域 */}
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="flex flex-wrap gap-2">
+              <ColorPalette editor={editor} />
+            </div>
+            <Editable
+              renderLeaf={renderLeaf}
+              renderElement={renderElement}
+              style={{ color: CHANNEL_COLOR[channel] }}
+              className="w-full border bg-gray-500/20 border-gray-500/30 p-4 rounded-xl min-h-96 outline-none"
+            />
+          </div>
+          
+          {/* 右侧图标面板 */}
+          <div className="w-64 flex flex-col gap-2">
+            <h3 className="text-sm font-medium text-white">英雄图标</h3>
+            <div className="grid grid-cols-4 gap-2 p-3 bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
+              {ICON_DATA.map((icon) => (
+                <button
+                  key={icon.code}
+                  onClick={() => handleIconClick(icon)}
+                  className="size-12 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                  title={icon.name}
+                  type="button"
+                >
+                  <Image
+                    width={20}
+                    height={20}
+                    src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
+                    alt={icon.name}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        <Editable
-          renderLeaf={renderLeaf}
-          renderElement={renderElement}
-          style={{ color: CHANNEL_COLOR[channel] }}
-          className="w-full border bg-gray-500/20 border-gray-500/30 p-4 rounded-xl min-h-96 outline-none"
-        />
       </Slate>
     </div>
   );
