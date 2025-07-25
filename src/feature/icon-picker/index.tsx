@@ -5,6 +5,8 @@ import { ICON_DATA, type IconData, HeroTag, TypeTag } from "./constant";
 import Image from "next/image";
 import { useState, useMemo } from "react";
 
+type FilterMode = "AND" | "OR";
+
 const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
   const handleClick = () => {
     Transforms.insertNodes(editor, {
@@ -35,10 +37,14 @@ const TagFilter = ({
   allTags,
   selectedTags,
   onTagToggle,
+  filterMode,
+  onFilterModeChange,
 }: {
   allTags: string[];
   selectedTags: Set<string>;
   onTagToggle: (tag: string) => void;
+  filterMode: FilterMode;
+  onFilterModeChange: (mode: FilterMode) => void;
 }) => {
   // 分离英雄标签和类型标签
   const heroTags = allTags.filter((tag) =>
@@ -73,7 +79,37 @@ const TagFilter = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-xs font-medium text-gray-400">Filter</h4>
+        <h4 className="text-xs font-medium text-gray-400 flex items-center gap-2">
+          Filter
+          <div className="space-y-1">
+            <div className="flex gap-1">
+              <button
+                onClick={() => onFilterModeChange("OR")}
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  filterMode === "OR"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/50"
+                }`}
+                type="button"
+                title="Show icons that have ANY selected tag"
+              >
+                OR
+              </button>
+              <button
+                onClick={() => onFilterModeChange("AND")}
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  filterMode === "AND"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/50"
+                }`}
+                type="button"
+                title="Show icons that have ALL selected tags"
+              >
+                AND
+              </button>
+            </div>
+          </div>
+        </h4>
         {selectedTags.size > 0 && (
           <button
             onClick={() => selectedTags.forEach((tag) => onTagToggle(tag))}
@@ -94,6 +130,7 @@ const TagFilter = ({
 
 export const IconSelector = ({ editor }: { editor: Editor }) => {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [filterMode, setFilterMode] = useState<FilterMode>("OR");
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -107,10 +144,19 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
     if (selectedTags.size === 0) {
       return ICON_DATA;
     }
-    return ICON_DATA.filter((icon) =>
-      icon.tags.some((tag) => selectedTags.has(tag))
-    );
-  }, [selectedTags]);
+
+    return ICON_DATA.filter((icon) => {
+      if (filterMode === "AND") {
+        // AND logic: icon must have ALL selected tags
+        return Array.from(selectedTags).every((tag) =>
+          icon.tags.some((iconTag) => iconTag === tag)
+        );
+      } else {
+        // OR logic: icon must have ANY selected tag
+        return icon.tags.some((tag) => selectedTags.has(tag));
+      }
+    });
+  }, [selectedTags, filterMode]);
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) => {
@@ -131,6 +177,8 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
         allTags={allTags}
         selectedTags={selectedTags}
         onTagToggle={handleTagToggle}
+        filterMode={filterMode}
+        onFilterModeChange={setFilterMode}
       />
       <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-3 flex">
         <div className="flex gap-2 flex-wrap mx-auto">
