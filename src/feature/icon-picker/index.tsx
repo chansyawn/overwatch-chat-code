@@ -17,7 +17,7 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
     <button
       onClick={handleClick}
       className="w-10 h-10 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center hover:bg-gray-600/50 transition-colors"
-      title={icon.tags}
+      title={icon.tags.join(", ")}
       type="button"
     >
       <Image
@@ -26,9 +26,6 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
         src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
         alt={icon.code}
       />
-      <span className="text-xs hidden bg-gray-200 px-1 rounded">
-        {icon.tags.slice(0, 2)}
-      </span>
     </button>
   );
 };

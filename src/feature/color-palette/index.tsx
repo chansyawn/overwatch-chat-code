@@ -77,6 +77,7 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
         >
           <ColorPicker
             value={color}
+            style={{ body: { backgroundColor: "transparent" } }}
             onChange={setColor}
             hideInputs
             hideEyeDrop
