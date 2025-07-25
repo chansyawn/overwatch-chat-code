@@ -139,10 +139,6 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
           ))}
         </div>
       </div>
-
-      <div className="text-xs text-gray-500 text-center">
-        显示 {filteredIcons.length} / {ICON_DATA.length} 个图标
-      </div>
     </div>
   );
 };
