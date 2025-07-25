@@ -1,10 +1,29 @@
 // src/custom-types.d.ts
-import { BaseEditor } from "slate";
+import { BaseEditor, Descendant } from "slate";
 import { ReactEditor } from "slate-react";
 
-type CustomElement = { type: "paragraph"; children: CustomText[] };
+export type EmptyText = {
+  text: "";
+};
 
-type CustomText = { text: string; color?: string };
+type IconElement = {
+  type: "icon";
+  icon: {
+    code: string;
+    name: string;
+    source: string;
+  };
+  children: EmptyText[];
+};
+
+type ParagraphElement = { type: "paragraph"; children: Descendant[] };
+
+type CustomElement = IconElement | ParagraphElement;
+
+type CustomText = {
+  text: string;
+  color?: string;
+};
 
 declare module "slate" {
   interface CustomTypes {

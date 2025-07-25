@@ -1,5 +1,5 @@
 import { Descendant } from "slate";
-import { rgbaToHex } from "../editor/color";
+import { rgbaToHex } from "../color-palette/color";
 import { CHANNEL_COLOR, OverwatchChannel } from "../channel";
 
 type ChatCodePreviewProps = {
@@ -8,12 +8,18 @@ type ChatCodePreviewProps = {
 };
 
 export const ChatCodePreview = ({ channel, value }: ChatCodePreviewProps) => {
-  const content = value[0];
-
-  const renderChatCode = () => {
-    if ("type" in content && content.type === "paragraph") {
+  const renderDescendant = (descendant: Descendant) => {
+    if ("type" in descendant && descendant.type === "paragraph") {
       let lastTextHaveColor = false;
-      return content.children.map((item) => {
+      return descendant.children.map((item) => {
+        if ("type" in item) {
+          if (item.type === "icon") {
+            return item.icon.code;
+          }
+          if (item.type === "paragraph") {
+            return "";
+          }
+        }
         if (item.color) {
           const hex = rgbaToHex(item.color);
           lastTextHaveColor = true;
@@ -26,7 +32,12 @@ export const ChatCodePreview = ({ channel, value }: ChatCodePreviewProps) => {
         return item.text;
       });
     }
+    return [];
   };
 
-  return <div className="w-full">{renderChatCode()}</div>;
+  const result = value
+    .map((item) => renderDescendant(item).join(""))
+    .join("\n");
+
+  return <div className="w-full whitespace-pre-wrap">{result}</div>;
 };
