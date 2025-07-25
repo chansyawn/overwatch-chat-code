@@ -12,7 +12,7 @@ const ColorButton = ({
   return (
     <button
       {...props}
-      className="size-6 rounded-lg border border-gray-300 flex items-center justify-center cursor-pointer bg-white"
+      className="w-7 h-7 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center cursor-pointer hover:bg-gray-600/40 transition-colors text-xs"
     >
       {children}
     </button>
@@ -36,10 +36,10 @@ const TextColorButton = ({
   };
 
   return (
-    <ColorButton
+    <button
       onMouseDown={handleClick}
       style={{ background: color }}
-      className="size-6 rounded-full border border-gray-300"
+      className="w-7 h-7 rounded border border-gray-600/50 hover:scale-105 transition-transform cursor-pointer"
     />
   );
 };
@@ -55,51 +55,50 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
   const [color, setColor] = useState<string>("#FFFFFF33");
 
   return (
-    <div>
-      <div className="flex gap-2 w-full flex-wrap">
-        <ColorButton onClick={() => Editor.removeMark(editor, "color")}>
-          🚫
-        </ColorButton>
-        {colors.map((color, idx) => (
-          <TextColorButton
-            key={`${color}_${idx}`}
-            color={color}
-            editor={editor}
+    <div className="flex gap-2 items-center flex-wrap">
+      <span className="text-sm text-gray-400">Color:</span>
+      <ColorButton onClick={() => Editor.removeMark(editor, "color")}>
+        ✕
+      </ColorButton>
+      {colors.map((color, idx) => (
+        <TextColorButton
+          key={`${color}_${idx}`}
+          color={color}
+          editor={editor}
+        />
+      ))}
+      <Popover className="relative">
+        <PopoverButton as="div">
+          <ColorButton>+</ColorButton>
+        </PopoverButton>
+        <PopoverPanel
+          anchor="bottom"
+          className="shadow-lg rounded-lg p-4 bg-gray-800 border border-gray-700/50 mt-2"
+        >
+          <ColorPicker
+            value={color}
+            onChange={setColor}
+            hideInputs
+            hideEyeDrop
+            hideAdvancedSliders
+            hideColorGuide
+            hideInputType
+            hideGradientType
+            hideGradientAngle
+            hideColorTypeBtns
+            config={{
+              defaultGradient:
+                "linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 100%)",
+            }}
           />
-        ))}
-        <Popover className="relative">
-          <PopoverButton as="div">
-            <ColorButton>+</ColorButton>
-          </PopoverButton>
-          <PopoverPanel
-            anchor="bottom"
-            className="shadow rounded-lg p-3 bg-white"
+          <button
+            className="w-full px-3 py-2 rounded-md text-sm bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors mt-3"
+            onClick={() => setColors([...colors, color])}
           >
-            <ColorPicker
-              value={color}
-              onChange={setColor}
-              hideInputs
-              hideEyeDrop
-              hideAdvancedSliders
-              hideColorGuide
-              hideInputType
-              hideGradientType
-              hideGradientAngle
-              hideColorTypeBtns
-              config={{
-                defaultGradient:
-                  "linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 100%)",
-              }}
-            />
-            <button
-              className="px-2 py-1 rounded-md text-sm bg-neutral-200 mt-1"
-              onClick={() => setColors([...colors, color])}
-            >
-              Add
-            </button>
-          </PopoverPanel>
-        </Popover>
-      </div>
+            Add Color
+          </button>
+        </PopoverPanel>
+      </Popover>
     </div>
   );
 };

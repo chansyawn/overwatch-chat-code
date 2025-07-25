@@ -23,20 +23,25 @@ export const CHANNEL_COLOR = {
 
 export const ChannelPicker = ({ value, onChange }: ChannelPickerProps) => {
   return (
-    <div className="flex gap-2">
-      {Object.values(OverwatchChannel).map((channel) => (
-        <button
-          key={channel}
-          onClick={() => onChange(channel)}
-          className={clsx(
-            "cursor-pointer border border-white/10 px-3 py-1 rounded-lg hover:bg-amber-300/20 transition-all duration-300 items-center",
-            value === channel ? "bg-amber-300/20" : "bg-slate-700/40"
-          )}
-          style={{ color: CHANNEL_COLOR[channel] }}
-        >
-          {channel}
-        </button>
-      ))}
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-gray-400">Channel:</span>
+      <div className="flex gap-3 p-1 bg-gray-800/50 rounded-lg border border-gray-700/50">
+        {Object.values(OverwatchChannel).map((channel) => (
+          <button
+            key={channel}
+            onClick={() => onChange(channel)}
+            className={clsx(
+              "px-3 py-1 rounded-md text-sm font-medium transition-all duration-200",
+              value === channel
+                ? "bg-gray-700 shadow-sm"
+                : "hover:bg-gray-700/50"
+            )}
+            style={{ color: CHANNEL_COLOR[channel] }}
+          >
+            {channel}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

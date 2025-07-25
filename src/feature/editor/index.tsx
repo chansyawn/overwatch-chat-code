@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { createEditor, Descendant, Editor } from "slate";
 import {
   Slate,
@@ -11,10 +11,10 @@ import {
 } from "slate-react";
 import { withHistory } from "slate-history";
 import { ColorPalette } from "../color-palette";
-import { CHANNEL_COLOR, OverwatchChannel } from "../channel";
+import { CHANNEL_COLOR, ChannelPicker, OverwatchChannel } from "../channel";
 import Image from "next/image";
-import { ICON_DATA, type IconData } from "../icon-picker/constant";
-import { Transforms } from "slate";
+import { IconSelector } from "../icon-picker";
+import { ChatCodePreview } from "../preview";
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   if (leaf.color) {
@@ -34,20 +34,14 @@ const Element = (props: RenderElementProps) => {
             className="inline-block"
             src={`https://assets.overwatchitemtracker.com/textures/${element.icon.code}.png`}
             alt={element.icon.name}
-            width={16}
-            height={16}
+            width={24}
+            height={24}
           />
         </span>
       );
     default:
       return <p {...attributes}>{children}</p>;
   }
-};
-
-type ChatCodeEditorProps = {
-  channel: OverwatchChannel;
-  value: Descendant[];
-  onChange: (value: Descendant[]) => void;
 };
 
 const withInline = (editor: Editor) => {
@@ -64,11 +58,16 @@ const withInline = (editor: Editor) => {
   return editor;
 };
 
-export const ChatCodeEditor = ({
-  channel,
-  value,
-  onChange,
-}: ChatCodeEditorProps) => {
+type ChatCodeEditorProps = {
+  value: Descendant[];
+  onChange: (value: Descendant[]) => void;
+};
+
+export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
+  const [channel, setChannel] = useState<OverwatchChannel>(
+    OverwatchChannel.All
+  );
+
   const editor = useMemo(
     () => withInline(withReact(withHistory(createEditor()))),
     []
@@ -82,52 +81,24 @@ export const ChatCodeEditor = ({
     return <Element {...props} />;
   }, []);
 
-  const handleIconClick = useCallback((icon: IconData) => {
-    Transforms.insertNodes(editor, {
-      type: "icon",
-      icon,
-      children: [{ text: "" }],
-    });
-  }, [editor]);
-
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full">
       <Slate editor={editor} initialValue={value} onChange={onChange}>
-        <div className="flex gap-4">
-          {/* 左侧编辑器区域 */}
-          <div className="flex-1 flex flex-col gap-2">
-            <div className="flex flex-wrap gap-2">
-              <ColorPalette editor={editor} />
-            </div>
+        <div className="flex gap-6">
+          <div className="flex-1 space-y-4">
+            <ChannelPicker value={channel} onChange={setChannel} />
+            <ColorPalette editor={editor} />
             <Editable
               renderLeaf={renderLeaf}
               renderElement={renderElement}
               style={{ color: CHANNEL_COLOR[channel] }}
-              className="w-full border bg-gray-500/20 border-gray-500/30 p-4 rounded-xl min-h-96 outline-none"
+              className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64 outline-none focus:border-gray-600/50 transition-colors"
+              placeholder="Type your message here..."
             />
+            <ChatCodePreview value={value} channel={channel} />
           </div>
-          
-          {/* 右侧图标面板 */}
-          <div className="w-64 flex flex-col gap-2">
-            <h3 className="text-sm font-medium text-white">英雄图标</h3>
-            <div className="grid grid-cols-4 gap-2 p-3 bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
-              {ICON_DATA.map((icon) => (
-                <button
-                  key={icon.code}
-                  onClick={() => handleIconClick(icon)}
-                  className="size-12 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
-                  title={icon.name}
-                  type="button"
-                >
-                  <Image
-                    width={20}
-                    height={20}
-                    src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
-                    alt={icon.name}
-                  />
-                </button>
-              ))}
-            </div>
+          <div className="flex-2">
+            <IconSelector editor={editor} />
           </div>
         </div>
       </Slate>

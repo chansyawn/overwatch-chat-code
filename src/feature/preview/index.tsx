@@ -53,22 +53,24 @@ export const ChatCodePreview = ({ channel, value }: ChatCodePreviewProps) => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-2">
-        <div className="text-white text-xl">Code</div>
+    <div className="w-full space-y-3">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium text-white">Generated Code</h3>
         <button
           onClick={handleCopy}
-          className={`px-3 py-1 rounded border ${
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
             copied
-              ? "bg-green-600 border-green-500 text-white"
-              : "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+              ? "bg-green-600/20 border border-green-500/30 text-green-400"
+              : "bg-gray-700/50 border border-gray-600/50 text-gray-300 hover:bg-gray-600/50"
           }`}
         >
-          {copied ? "Copied!" : "Copy"}
+          {copied ? "Copied!" : "Copy Code"}
         </button>
       </div>
-      <div className="whitespace-pre-wrap text-white bg-gray-500/20 border border-gray-500/30 p-4 rounded-xl">
-        {result}
+      <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-4">
+        <pre className="whitespace-pre-wrap text-gray-200 text-sm font-mono">
+          {result || "Your generated code will appear here..."}
+        </pre>
       </div>
     </div>
   );

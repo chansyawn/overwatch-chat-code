@@ -1,6 +1,5 @@
 "use client";
 
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { Editor, Transforms } from "slate";
 import { ICON_DATA, type IconData } from "./constant";
 import Image from "next/image";
@@ -17,13 +16,13 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
   return (
     <button
       onClick={handleClick}
-      className="size-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+      className="w-10 h-10 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center hover:bg-gray-600/50 transition-colors"
       title={icon.name}
       type="button"
     >
       <Image
-        width={16}
-        height={16}
+        width={24}
+        height={24}
         src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
         alt={icon.name}
       />
@@ -36,20 +35,15 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
 
 export const IconSelector = ({ editor }: { editor: Editor }) => {
   return (
-    <Popover className="relative">
-      <PopoverButton className="cursor-pointer size-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors">
-        😀
-      </PopoverButton>
-      <PopoverPanel
-        anchor="bottom"
-        className="shadow-lg rounded-lg p-3 bg-white border border-gray-200 z-10 [--anchor-gap:--spacing(2)]"
-      >
-        <div className="grid grid-cols-3 gap-2 max-w-xs">
+    <div className="space-y-3">
+      <h3 className="text-sm font-medium text-gray-300">Icons</h3>
+      <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-3 flex">
+        <div className="flex gap-2 flex-wrap mx-auto">
           {ICON_DATA.map((icon) => (
             <IconButton key={icon.code} icon={icon} editor={editor} />
           ))}
         </div>
-      </PopoverPanel>
-    </Popover>
+      </div>
+    </div>
   );
 };
