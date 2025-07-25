@@ -33,7 +33,7 @@ const Element = (props: RenderElementProps) => {
           <Image
             className="inline-block"
             src={`https://assets.overwatchitemtracker.com/textures/${element.icon.code}.png`}
-            alt={element.icon.name}
+            alt={element.icon.code}
             width={24}
             height={24}
           />

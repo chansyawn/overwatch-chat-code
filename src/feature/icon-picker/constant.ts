@@ -1,171 +1,217 @@
+enum IconTag {
+  // Hero
+  Mercy = "Mercy",
+  Reaper = "Reaper",
+  Doomfist = "Doomfist",
+  JunkerQueen = "Junker Queen",
+  Orisa = "Orisa",
+  Ramatra = "Ramatra",
+  Rein = "Rein",
+  Winston = "Winston",
+  WreakingBall = "Wreaking ball",
+  Sigma = "Sigma",
+  Zarya = "Zarya",
+  Ashe = "Ashe",
+  Bastion = "Bastion",
+  Cass = "Cass",
+  Genji = "Genji",
+  Hanzo = "Hanzo",
+  Junkrat = "Junkrat",
+  Mei = "Mei",
+  Pharah = "Pharah",
+  Sojourn = "Sojourn",
+  Soldier76 = "Soldier 76",
+  Sombra = "Sombra",
+  Symetra = "Symetra",
+  Torbjorn = "Torbjorn",
+  Widowmaker = "Widowmaker",
+  Moira = "Moira",
+  Zenyatta = "Zenyatta",
+  Ana = "Ana",
+  Tracer = "Tracer",
+  Baptiste = "Baptiste",
+  Brigitte = "Brigitte",
+  Kiriko = "Kiriko",
+  Lucio = "Lucio",
+  Echo = "Echo",
+  LifeWeaver = "Life Weaver",
+  Illari = "Illari",
+  Hazard = "Hazard",
+  Juno = "Juno",
+  Venture = "Venture",
+
+  // Type
+  HeroAvatar = "Hero Avatar",
+}
+
 export type IconData = {
   code: string;
-  name: string;
+  tags: IconTag[];
 };
 
 export const ICON_DATA: IconData[] = [
   {
     code: "000000038C19",
-    name: "Mercy",
+    tags: [IconTag.Mercy, IconTag.HeroAvatar],
   },
   {
     code: "0000000384A0",
-    name: "Reaper",
+    tags: [IconTag.Reaper, IconTag.HeroAvatar],
   },
   {
     code: "000000038C1A",
-    name: "Doomfist",
+    tags: [IconTag.Doomfist, IconTag.HeroAvatar],
   },
   {
     code: "000000038C1B",
-    name: "Junker Queen",
+    tags: [IconTag.JunkerQueen, IconTag.HeroAvatar],
   },
   {
     code: "000000038C1C",
-    name: "Orisa",
+    tags: [IconTag.Orisa, IconTag.HeroAvatar],
   },
   {
     code: "000000038C1D",
-    name: "Ramatra",
+    tags: [IconTag.Ramatra, IconTag.HeroAvatar],
   },
   {
     code: "000000038C1E",
-    name: "Rein",
+    tags: [IconTag.Rein, IconTag.HeroAvatar],
   },
   {
     code: "000000038C25",
-    name: "Winston",
+    tags: [IconTag.Winston, IconTag.HeroAvatar],
   },
   {
     code: "000000038C26",
-    name: "Wreaking ball",
+    tags: [IconTag.WreakingBall, IconTag.HeroAvatar],
   },
   {
     code: "000000038C27",
-    name: "Sigma",
+    tags: [IconTag.Sigma, IconTag.HeroAvatar],
   },
   {
     code: "000000038C28",
-    name: "Zarya",
+    tags: [IconTag.Zarya, IconTag.HeroAvatar],
   },
   {
     code: "000000038C29",
-    name: "Ashe",
+    tags: [IconTag.Ashe, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2A",
-    name: "Bastion",
+    tags: [IconTag.Bastion, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2B",
-    name: "Cass",
+    tags: [IconTag.Cass, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2C",
-    name: "Genji",
+    tags: [IconTag.Genji, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2D",
-    name: "Hanzo",
+    tags: [IconTag.Hanzo, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2E",
-    name: "Junkrat",
+    tags: [IconTag.Junkrat, IconTag.HeroAvatar],
   },
   {
     code: "000000038C2F",
-    name: "Mei",
+    tags: [IconTag.Mei, IconTag.HeroAvatar],
   },
   {
     code: "000000038C30",
-    name: "Pharah",
+    tags: [IconTag.Pharah, IconTag.HeroAvatar],
   },
   {
     code: "000000038C31",
-    name: "Reaper",
+    tags: [IconTag.Reaper, IconTag.HeroAvatar],
   },
   {
     code: "000000038C33",
-    name: "Sojourn",
+    tags: [IconTag.Sojourn, IconTag.HeroAvatar],
   },
   {
     code: "000000038C34",
-    name: "Soldier 76",
+    tags: [IconTag.Soldier76, IconTag.HeroAvatar],
   },
   {
     code: "000000038C35",
-    name: "Sombra",
+    tags: [IconTag.Sombra, IconTag.HeroAvatar],
   },
   {
     code: "000000038C36",
-    name: "Symetra",
+    tags: [IconTag.Symetra, IconTag.HeroAvatar],
   },
   {
     code: "000000038C37",
-    name: "Torbjorn",
+    tags: [IconTag.Torbjorn, IconTag.HeroAvatar],
   },
   {
     code: "000000038C38",
-    name: "Widowmaker",
+    tags: [IconTag.Widowmaker, IconTag.HeroAvatar],
   },
   {
     code: "000000038C39",
-    name: "Mercy",
+    tags: [IconTag.Mercy, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3A",
-    name: "Moira",
+    tags: [IconTag.Moira, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3B",
-    name: "Zenyatta",
+    tags: [IconTag.Zenyatta, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3C",
-    name: "Ana",
+    tags: [IconTag.Ana, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3D",
-    name: "Tracer",
+    tags: [IconTag.Tracer, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3E",
-    name: "Baptiste",
+    tags: [IconTag.Baptiste, IconTag.HeroAvatar],
   },
   {
     code: "000000038C3F",
-    name: "Brigitte",
+    tags: [IconTag.Brigitte, IconTag.HeroAvatar],
   },
   {
     code: "000000038C40",
-    name: "Kiriko",
+    tags: [IconTag.Kiriko, IconTag.HeroAvatar],
   },
   {
     code: "000000038C41",
-    name: "Lucio",
+    tags: [IconTag.Lucio, IconTag.HeroAvatar],
   },
   {
     code: "000000039FDB",
-    name: "Echo",
+    tags: [IconTag.Echo, IconTag.HeroAvatar],
   },
   {
     code: "00000003FF61",
-    name: "Life Weaver",
+    tags: [IconTag.LifeWeaver, IconTag.HeroAvatar],
   },
   {
     code: "00000004447D",
-    name: "Illari",
+    tags: [IconTag.Illari, IconTag.HeroAvatar],
   },
   {
     code: "000000044C5E",
-    name: "Hazard",
+    tags: [IconTag.Hazard, IconTag.HeroAvatar],
   },
   {
     code: "000000045C2E",
-    name: "Juno",
+    tags: [IconTag.Juno, IconTag.HeroAvatar],
   },
   {
     code: "0000000489CF",
-    name: "Venture",
+    tags: [IconTag.Venture, IconTag.HeroAvatar],
   },
 ];
