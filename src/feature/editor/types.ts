@@ -1,6 +1,6 @@
-// src/custom-types.d.ts
 import { BaseEditor, Descendant } from "slate";
 import { ReactEditor } from "slate-react";
+import { IconData } from "../icon-picker/constant";
 
 export type EmptyText = {
   text: "";
@@ -8,11 +8,7 @@ export type EmptyText = {
 
 type IconElement = {
   type: "icon";
-  icon: {
-    code: string;
-    name: string;
-    source: string;
-  };
+  icon: IconData;
   children: EmptyText[];
 };
 

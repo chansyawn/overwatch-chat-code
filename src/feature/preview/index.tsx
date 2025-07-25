@@ -17,7 +17,7 @@ export const ChatCodePreview = ({ channel, value }: ChatCodePreviewProps) => {
       return descendant.children.map((item) => {
         if ("type" in item) {
           if (item.type === "icon") {
-            return item.icon.code;
+            return `<TXC00${item.icon.code}>`;
           }
           if (item.type === "paragraph") {
             return "";

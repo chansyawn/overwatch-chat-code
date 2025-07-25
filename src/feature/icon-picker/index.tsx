@@ -21,7 +21,12 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
       title={icon.name}
       type="button"
     >
-      <Image width={16} height={16} src={icon.source} alt={icon.name} />
+      <Image
+        width={16}
+        height={16}
+        src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
+        alt={icon.name}
+      />
       <span className="text-xs hidden bg-gray-200 px-1 rounded">
         {icon.name.slice(0, 2)}
       </span>
@@ -40,12 +45,8 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
         className="shadow-lg rounded-lg p-3 bg-white border border-gray-200 z-10 [--anchor-gap:--spacing(2)]"
       >
         <div className="grid grid-cols-3 gap-2 max-w-xs">
-          {ICON_DATA.map((icon, idx) => (
-            <IconButton
-              key={`${icon.code}_${idx}`}
-              icon={icon}
-              editor={editor}
-            />
+          {ICON_DATA.map((icon) => (
+            <IconButton key={icon.code} icon={icon} editor={editor} />
           ))}
         </div>
       </PopoverPanel>

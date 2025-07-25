@@ -31,7 +31,7 @@ const Element = (props: RenderElementProps) => {
         <span contentEditable={false} {...attributes}>
           <Image
             className="inline-block"
-            src={element.icon.source}
+            src={`https://assets.overwatchitemtracker.com/textures/${element.icon.code}.png`}
             alt={element.icon.name}
             width={16}
             height={16}
