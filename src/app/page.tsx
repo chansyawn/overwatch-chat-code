@@ -3,7 +3,6 @@
 import { ChatCodeEditor } from "@/feature/editor";
 import { useState } from "react";
 import { Descendant } from "slate";
-import { Analytics } from "@vercel/analytics/next";
 
 const initialValue: Descendant[] = [
   {
@@ -28,7 +27,6 @@ export default function App() {
         </div>
         <ChatCodeEditor value={value} onChange={setValue} />
       </main>
-      <Analytics />
       <footer className="mt-8 pt-8 border-t border-gray-700">
         <div className="text-center">
           <p className="text-gray-400 text-sm mb-4">Thanks to:</p>
