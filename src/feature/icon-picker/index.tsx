@@ -9,8 +9,8 @@ import {
   SpecialTag,
 } from "./constant";
 import Image from "next/image";
-import { useState, useMemo, useEffect } from "react";
-import { getCustomIcons, addCustomIcon, removeCustomIcon } from "./storage";
+import { useState, useMemo } from "react";
+import { useCustomIcons } from "./storage";
 import { CustomIconAdder } from "./custom";
 
 type FilterMode = "AND" | "OR";
@@ -173,12 +173,7 @@ const TagFilter = ({
 export const IconSelector = ({ editor }: { editor: Editor }) => {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [filterMode, setFilterMode] = useState<FilterMode>("OR");
-  const [customIcons, setCustomIcons] = useState<IconData[]>([]);
-
-  // 加载自定义图标
-  useEffect(() => {
-    setCustomIcons(getCustomIcons());
-  }, []);
+  const { customIcons, addCustomIcon, removeCustomIcon } = useCustomIcons();
 
   // 合并默认图标和自定义图标
   const allIcons = useMemo(() => {
@@ -224,17 +219,14 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
   };
 
   const handleAddCustomIcon = (icon: IconData) => {
-    const result = addCustomIcon(customIcons, icon);
-    if (result.success) {
-      setCustomIcons(result.icons);
-    } else {
+    const result = addCustomIcon(icon);
+    if (!result.success) {
       alert(result.error);
     }
   };
 
   const handleDeleteCustomIcon = (codeToDelete: string) => {
-    const updatedIcons = removeCustomIcon(customIcons, codeToDelete);
-    setCustomIcons(updatedIcons);
+    removeCustomIcon(codeToDelete);
   };
 
   return (

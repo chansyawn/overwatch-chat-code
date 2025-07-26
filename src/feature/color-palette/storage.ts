@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { atom, useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-// 默认颜色调色板
 export const DEFAULT_COLORS = [
   "rgba(255, 255, 255, 1",
   "rgba(0, 195, 255, 1)",
@@ -12,57 +12,29 @@ export const DEFAULT_COLORS = [
   "linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)",
 ];
 
-// 存储键名
 const STORAGE_KEY = "color-palette-custom-colors";
 
-// 自定义hook用于管理颜色的持久化存储
+const customColorsAtom = atomWithStorage<string[]>(STORAGE_KEY, []);
+
+const allColorsAtom = atom((get) => {
+  const customColors = get(customColorsAtom);
+  return [...DEFAULT_COLORS, ...customColors];
+});
+
 export const usePersistedColors = () => {
-  const [colors, setColors] = useState<string[]>(DEFAULT_COLORS);
+  const [, setCustomColors] = useAtom(customColorsAtom);
+  const [allColors] = useAtom(allColorsAtom);
 
-  // 从localStorage加载颜色
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const savedColors = localStorage.getItem(STORAGE_KEY);
-        if (savedColors) {
-          const customColors = JSON.parse(savedColors);
-          // 合并默认颜色和用户自定义颜色
-          setColors([...DEFAULT_COLORS, ...customColors]);
-        }
-      } catch (error) {
-        console.error("Error loading colors from localStorage:", error);
-      }
-    }
-  }, []);
-
-  // 保存颜色到localStorage
-  const saveColors = (newColors: string[]) => {
-    if (typeof window !== "undefined") {
-      try {
-        // 只保存用户自定义的颜色（默认颜色之外的）
-        const customColors = newColors.slice(DEFAULT_COLORS.length);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(customColors));
-      } catch (error) {
-        console.error("Error saving colors to localStorage:", error);
-      }
-    }
-  };
-
-  // 添加颜色
   const addColor = (color: string) => {
-    const newColors = [...colors, color];
-    setColors(newColors);
-    saveColors(newColors);
+    setCustomColors((prev) => [...prev, color]);
   };
 
-  // 删除颜色（只能删除用户自定义的颜色）
   const removeColor = (index: number) => {
     if (index >= DEFAULT_COLORS.length) {
-      const newColors = colors.filter((_, i) => i !== index);
-      setColors(newColors);
-      saveColors(newColors);
+      const customIndex = index - DEFAULT_COLORS.length;
+      setCustomColors((prev) => prev.filter((_, i) => i !== customIndex));
     }
   };
 
-  return { colors, addColor, removeColor };
+  return { colors: allColors, addColor, removeColor };
 };
