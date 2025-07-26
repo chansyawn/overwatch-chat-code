@@ -3,7 +3,8 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ButtonHTMLAttributes, useState } from "react";
 import ColorPicker from "react-best-gradient-color-picker";
-import { Editor } from "slate";
+import { Editor, Range, Transforms } from "slate";
+import { isGradient, generateGradientColors } from "./color";
 
 const ColorButton = ({
   children,
@@ -28,11 +29,17 @@ const TextColorButton = ({
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const marks = Editor.marks(editor);
-    if (marks && marks.color) {
-      Editor.removeMark(editor, "color");
+
+    if (isGradient(color)) {
+      applyGradientToSelection(editor, color);
+      return;
+    } else {
+      const marks = Editor.marks(editor);
+      if (marks && marks.color) {
+        Editor.removeMark(editor, "color");
+      }
+      Editor.addMark(editor, "color", color);
     }
-    Editor.addMark(editor, "color", color);
   };
 
   return (
@@ -44,6 +51,34 @@ const TextColorButton = ({
   );
 };
 
+// 应用渐变到选中文字
+const applyGradientToSelection = (editor: Editor, gradientColor: string) => {
+  if (!editor.selection || Range.isCollapsed(editor.selection)) {
+    return; // 没有选中内容，直接返回
+  }
+
+  // 获取选中的文本
+  const selectedText = Editor.string(editor, editor.selection);
+
+  if (!selectedText) {
+    return; // 没有文本内容，直接返回
+  }
+
+  // 使用 generateGradientColors 生成颜色数组
+  const colors = generateGradientColors(gradientColor, selectedText.length);
+
+  // 删除选中的内容
+  Transforms.delete(editor);
+
+  // 为每个字符创建带有颜色标记的文本节点并插入
+  const textNodes = selectedText.split("").map((char, index) => ({
+    text: char,
+    color: colors[index],
+  }));
+
+  Transforms.insertNodes(editor, textNodes);
+};
+
 export const ColorPalette = ({ editor }: { editor: Editor }) => {
   const [colors, setColors] = useState<string[]>([
     "rgba(255, 255, 255, 1",
@@ -51,6 +86,9 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
     "rgba(0, 218, 0, 1)",
     "rgba(255, 152, 67, 1)",
     "rgba(244, 130, 255, 1)",
+    "linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%)",
+    "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%)",
+    "linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)"
   ]);
   const [color, setColor] = useState<string>("#FFFFFF33");
 
@@ -86,7 +124,7 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
             hideInputType
             hideGradientType
             hideGradientAngle
-            hideColorTypeBtns
+            disableLightMode
             config={{
               defaultGradient:
                 "linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 100%)",
