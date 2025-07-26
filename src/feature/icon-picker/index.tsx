@@ -1,13 +1,31 @@
 "use client";
 
 import { Editor, Transforms } from "slate";
-import { ICON_DATA, type IconData, HeroTag, TypeTag } from "./constant";
+import {
+  ICON_DATA,
+  type IconData,
+  HeroTag,
+  TypeTag,
+  SpecialTag,
+} from "./constant";
 import Image from "next/image";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { getCustomIcons, addCustomIcon, removeCustomIcon } from "./storage";
+import { CustomIconAdder } from "./custom";
 
 type FilterMode = "AND" | "OR";
 
-const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
+const IconButton = ({
+  icon,
+  editor,
+  isCustom = false,
+  onDelete,
+}: {
+  icon: IconData;
+  editor: Editor;
+  isCustom?: boolean;
+  onDelete?: () => void;
+}) => {
   const handleClick = () => {
     Transforms.insertNodes(editor, {
       type: "icon",
@@ -17,20 +35,35 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
   };
 
   return (
-    <button
-      onClick={handleClick}
-      className="w-10 h-10 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center hover:bg-gray-600/50 transition-colors"
-      title={icon.tags.join(", ")}
-      type="button"
-    >
-      <Image
-        width={24}
-        height={24}
-        src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
-        alt={icon.code}
-        unoptimized
-      />
-    </button>
+    <div className="relative group">
+      <button
+        onClick={handleClick}
+        className="w-10 h-10 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center hover:bg-gray-600/50 transition-colors"
+        title={`${icon.code} - ${icon.tags.join(", ")}`}
+        type="button"
+      >
+        <Image
+          width={24}
+          height={24}
+          src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
+          alt={icon.code}
+          unoptimized
+        />
+      </button>
+      {isCustom && onDelete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 hover:bg-red-700 text-white text-xs rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          title="Delete custom icon"
+          type="button"
+        >
+          ×
+        </button>
+      )}
+    </div>
   );
 };
 
@@ -47,35 +80,42 @@ const TagFilter = ({
   filterMode: FilterMode;
   onFilterModeChange: (mode: FilterMode) => void;
 }) => {
-  // 分离英雄标签和类型标签
+  // 分离不同类型的标签
   const heroTags = allTags.filter((tag) =>
     Object.values(HeroTag).includes(tag as HeroTag)
   );
   const typeTags = allTags.filter((tag) =>
     Object.values(TypeTag).includes(tag as TypeTag)
   );
-
-  const TagRow = ({ tags, title }: { tags: string[]; title: string }) => (
-    <div className="space-y-1">
-      <h5 className="text-xs font-medium text-gray-500">{title}</h5>
-      <div className="flex flex-wrap gap-1">
-        {tags.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => onTagToggle(tag)}
-            className={`px-2 py-1 text-xs rounded transition-colors ${
-              selectedTags.has(tag)
-                ? "bg-blue-600 text-white"
-                : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/50"
-            }`}
-            type="button"
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
-    </div>
+  const specialTags = allTags.filter((tag) =>
+    Object.values(SpecialTag).includes(tag as SpecialTag)
   );
+
+  const TagRow = ({ tags, title }: { tags: string[]; title: string }) => {
+    if (tags.length === 0) return null;
+
+    return (
+      <div className="space-y-1">
+        <h5 className="text-xs font-medium text-gray-500">{title}</h5>
+        <div className="flex flex-wrap gap-1">
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => onTagToggle(tag)}
+              className={`px-2 py-1 text-xs rounded transition-colors ${
+                selectedTags.has(tag)
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-700/50 text-gray-300 hover:bg-gray-600/50"
+              }`}
+              type="button"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-3">
@@ -124,6 +164,7 @@ const TagFilter = ({
       <div className="space-y-3 overflow-y-auto">
         <TagRow tags={heroTags} title="Hero" />
         <TagRow tags={typeTags} title="Type" />
+        <TagRow tags={specialTags} title="Special" />
       </div>
     </div>
   );
@@ -132,21 +173,32 @@ const TagFilter = ({
 export const IconSelector = ({ editor }: { editor: Editor }) => {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [filterMode, setFilterMode] = useState<FilterMode>("OR");
+  const [customIcons, setCustomIcons] = useState<IconData[]>([]);
+
+  // 加载自定义图标
+  useEffect(() => {
+    setCustomIcons(getCustomIcons());
+  }, []);
+
+  // 合并默认图标和自定义图标
+  const allIcons = useMemo(() => {
+    return [...ICON_DATA, ...customIcons];
+  }, [customIcons]);
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
-    ICON_DATA.forEach((icon) => {
+    allIcons.forEach((icon) => {
       icon.tags.forEach((tag) => tags.add(tag));
     });
     return Array.from(tags).sort();
-  }, []);
+  }, [allIcons]);
 
   const filteredIcons = useMemo(() => {
     if (selectedTags.size === 0) {
-      return ICON_DATA;
+      return allIcons;
     }
 
-    return ICON_DATA.filter((icon) => {
+    return allIcons.filter((icon) => {
       if (filterMode === "AND") {
         // AND logic: icon must have ALL selected tags
         return Array.from(selectedTags).every((tag) =>
@@ -157,7 +209,7 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
         return icon.tags.some((tag) => selectedTags.has(tag));
       }
     });
-  }, [selectedTags, filterMode]);
+  }, [allIcons, selectedTags, filterMode]);
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) => {
@@ -171,9 +223,24 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
     });
   };
 
+  const handleAddCustomIcon = (icon: IconData) => {
+    const result = addCustomIcon(customIcons, icon);
+    if (result.success) {
+      setCustomIcons(result.icons);
+    } else {
+      alert(result.error);
+    }
+  };
+
+  const handleDeleteCustomIcon = (codeToDelete: string) => {
+    const updatedIcons = removeCustomIcon(customIcons, codeToDelete);
+    setCustomIcons(updatedIcons);
+  };
+
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-medium text-gray-300">Icons</h3>
+      <CustomIconAdder onAddCustomIcon={handleAddCustomIcon} />
       <TagFilter
         allTags={allTags}
         selectedTags={selectedTags}
@@ -183,11 +250,30 @@ export const IconSelector = ({ editor }: { editor: Editor }) => {
       />
       <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-3 flex">
         <div className="flex gap-2 flex-wrap mx-auto">
-          {filteredIcons.map((icon) => (
-            <IconButton key={icon.code} icon={icon} editor={editor} />
-          ))}
+          {filteredIcons.map((icon) => {
+            const isCustom = customIcons.some(
+              (customIcon) => customIcon.code === icon.code
+            );
+            return (
+              <IconButton
+                key={icon.code}
+                icon={icon}
+                editor={editor}
+                isCustom={isCustom}
+                onDelete={
+                  isCustom ? () => handleDeleteCustomIcon(icon.code) : undefined
+                }
+              />
+            );
+          })}
         </div>
       </div>
+
+      {filteredIcons.length === 0 && (
+        <div className="text-center text-gray-500 text-sm py-4">
+          No icons found matching the selected filters.
+        </div>
+      )}
     </div>
   );
 };

@@ -61,9 +61,13 @@ export enum TypeTag {
   Event = "Event",
 }
 
+export enum SpecialTag {
+  Custom = "Custom",
+}
+
 export type IconData = {
   code: string;
-  tags: (HeroTag | TypeTag)[];
+  tags: (HeroTag | TypeTag | SpecialTag)[];
 };
 
 export const ICON_DATA: IconData[] = [
