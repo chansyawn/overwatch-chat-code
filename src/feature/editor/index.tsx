@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useCallback, useState } from "react";
-import { createEditor, Descendant, Editor } from "slate";
+import { createEditor, Descendant, Editor, Transforms } from "slate";
 import {
   Slate,
   Editable,
@@ -74,6 +74,40 @@ export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
     []
   );
 
+  const handleApplyTemplate = useCallback(
+    (templateContent: Descendant[]) => {
+      Editor.withoutNormalizing(editor, () => {
+        // 清空编辑器内容
+        const point = { path: [0, 0], offset: 0 };
+        Transforms.select(editor, point);
+        Transforms.delete(editor, {
+          at: {
+            anchor: point,
+            focus: Editor.end(editor, [])
+          }
+        });
+        
+        // 插入模板内容
+        if (templateContent.length > 0) {
+          Transforms.insertNodes(editor, templateContent, { at: [0] });
+        } else {
+          // 如果没有模板内容，插入一个空段落
+          Transforms.insertNodes(editor, {
+            type: 'paragraph',
+            children: [{ text: '' }]
+          });
+        }
+        
+        // 将光标移动到开始位置
+        Transforms.select(editor, { path: [0, 0], offset: 0 });
+      });
+      
+      // 调用 onChange 来更新外部状态
+      onChange(templateContent);
+    },
+    [editor, onChange]
+  );
+
   const renderLeaf = useCallback((props: RenderLeafProps) => {
     return <Leaf {...props} />;
   }, []);
@@ -98,7 +132,11 @@ export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
                 placeholder="Type your message here..."
               />
             </div>
-            <ChatCodePreview value={value} channel={channel} />
+            <ChatCodePreview
+              value={value}
+              channel={channel}
+              onApplyTemplate={handleApplyTemplate}
+            />
           </div>
           <div className="w-2/3">
             <IconSelector editor={editor} />
