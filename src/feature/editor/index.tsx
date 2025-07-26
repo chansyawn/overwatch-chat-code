@@ -36,6 +36,7 @@ const Element = (props: RenderElementProps) => {
             alt={element.icon.code}
             width={24}
             height={24}
+            unoptimized
           />
         </span>
       );

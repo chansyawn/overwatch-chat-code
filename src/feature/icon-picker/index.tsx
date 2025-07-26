@@ -28,6 +28,7 @@ const IconButton = ({ icon, editor }: { icon: IconData; editor: Editor }) => {
         height={24}
         src={`https://assets.overwatchitemtracker.com/textures/${icon.code}.png`}
         alt={icon.code}
+        unoptimized
       />
     </button>
   );
