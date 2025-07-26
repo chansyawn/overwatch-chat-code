@@ -68,7 +68,7 @@ export const ChatCodePreview = ({ channel, value }: ChatCodePreviewProps) => {
         </button>
       </div>
       <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-4">
-        <pre className="whitespace-pre-wrap text-gray-200 text-sm font-mono">
+        <pre className="whitespace-pre-wrap text-gray-200 text-sm font-mono break-all">
           {result || "Your generated code will appear here..."}
         </pre>
       </div>
