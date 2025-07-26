@@ -1,20 +1,15 @@
 "use client";
 
-import React, { useMemo, useCallback, useState } from "react";
-import { createEditor, Descendant, Editor, Transforms } from "slate";
+import React, { useCallback } from "react";
+import { Descendant, Editor } from "slate";
 import {
   Slate,
   Editable,
-  withReact,
   RenderLeafProps,
   RenderElementProps,
 } from "slate-react";
-import { withHistory } from "slate-history";
-import { ColorPalette } from "../color-palette";
-import { CHANNEL_COLOR, ChannelPicker, OverwatchChannel } from "../channel";
+import { CHANNEL_COLOR, OverwatchChannel } from "../channel";
 import Image from "next/image";
-import { IconSelector } from "../icon-picker";
-import { ChatCodePreview } from "../preview";
 
 const Leaf = ({ attributes, children, leaf }: RenderLeafProps) => {
   if (leaf.color) {
@@ -45,69 +40,19 @@ const Element = (props: RenderElementProps) => {
   }
 };
 
-const withInline = (editor: Editor) => {
-  const { isInline, isElementReadOnly, isSelectable } = editor;
-
-  editor.isInline = (element) => element.type === "icon" || isInline(element);
-
-  editor.isElementReadOnly = (element) =>
-    element.type === "icon" || isElementReadOnly(element);
-
-  editor.isSelectable = (element) =>
-    element.type !== "icon" && isSelectable(element);
-
-  return editor;
-};
-
 type ChatCodeEditorProps = {
   value: Descendant[];
   onChange: (value: Descendant[]) => void;
+  editor: Editor;
+  channel: OverwatchChannel;
 };
 
-export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
-  const [channel, setChannel] = useState<OverwatchChannel>(
-    OverwatchChannel.All
-  );
-
-  const editor = useMemo(
-    () => withInline(withReact(withHistory(createEditor()))),
-    []
-  );
-
-  const handleApplyTemplate = useCallback(
-    (templateContent: Descendant[]) => {
-      Editor.withoutNormalizing(editor, () => {
-        // 清空编辑器内容
-        const point = { path: [0, 0], offset: 0 };
-        Transforms.select(editor, point);
-        Transforms.delete(editor, {
-          at: {
-            anchor: point,
-            focus: Editor.end(editor, [])
-          }
-        });
-        
-        // 插入模板内容
-        if (templateContent.length > 0) {
-          Transforms.insertNodes(editor, templateContent, { at: [0] });
-        } else {
-          // 如果没有模板内容，插入一个空段落
-          Transforms.insertNodes(editor, {
-            type: 'paragraph',
-            children: [{ text: '' }]
-          });
-        }
-        
-        // 将光标移动到开始位置
-        Transforms.select(editor, { path: [0, 0], offset: 0 });
-      });
-      
-      // 调用 onChange 来更新外部状态
-      onChange(templateContent);
-    },
-    [editor, onChange]
-  );
-
+export const ChatCodeEditor = ({ 
+  value, 
+  onChange, 
+  editor, 
+  channel 
+}: ChatCodeEditorProps) => {
   const renderLeaf = useCallback((props: RenderLeafProps) => {
     return <Leaf {...props} />;
   }, []);
@@ -117,32 +62,14 @@ export const ChatCodeEditor = ({ value, onChange }: ChatCodeEditorProps) => {
   }, []);
 
   return (
-    <div className="w-full">
-      <Slate editor={editor} initialValue={value} onChange={onChange}>
-        <div className="flex gap-6">
-          <div className="w-1/3 space-y-4 flex-shrink-0">
-            <ChannelPicker value={channel} onChange={setChannel} />
-            <ColorPalette editor={editor} />
-            <div className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64">
-              <Editable
-                renderLeaf={renderLeaf}
-                renderElement={renderElement}
-                style={{ color: CHANNEL_COLOR[channel] }}
-                className="w-full h-full outline-none"
-                placeholder="Type your message here..."
-              />
-            </div>
-            <ChatCodePreview
-              value={value}
-              channel={channel}
-              onApplyTemplate={handleApplyTemplate}
-            />
-          </div>
-          <div className="w-2/3">
-            <IconSelector editor={editor} />
-          </div>
-        </div>
-      </Slate>
-    </div>
+    <Slate editor={editor} initialValue={value} onChange={onChange}>
+      <Editable
+        renderLeaf={renderLeaf}
+        renderElement={renderElement}
+        style={{ color: CHANNEL_COLOR[channel] }}
+        className="w-full h-full outline-none"
+        placeholder="Type your message here..."
+      />
+    </Slate>
   );
 };
