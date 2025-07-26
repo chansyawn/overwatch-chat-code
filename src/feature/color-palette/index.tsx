@@ -5,6 +5,7 @@ import { ButtonHTMLAttributes, useState } from "react";
 import ColorPicker from "react-best-gradient-color-picker";
 import { Editor, Range, Transforms } from "slate";
 import { isGradient, generateGradientColors } from "./color";
+import { DEFAULT_COLORS, usePersistedColors } from "./storage";
 
 const ColorButton = ({
   children,
@@ -23,9 +24,13 @@ const ColorButton = ({
 const TextColorButton = ({
   color,
   editor,
+  onRemove,
+  canRemove = false,
 }: {
   color: string;
   editor: Editor;
+  onRemove?: () => void;
+  canRemove?: boolean;
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -42,12 +47,24 @@ const TextColorButton = ({
     }
   };
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onRemove?.();
+  };
+
   return (
-    <button
-      onMouseDown={handleClick}
-      style={{ background: color }}
-      className="w-7 h-7 rounded border border-gray-600/50 hover:scale-105 transition-transform cursor-pointer"
-    />
+    <div className="relative group">
+      <ColorButton onMouseDown={handleClick} style={{ background: color }} />
+      {canRemove && (
+        <button
+          onClick={handleRemove}
+          className="cursor-pointer absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs leading-none opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+        >
+          ✕
+        </button>
+      )}
+    </div>
   );
 };
 
@@ -80,17 +97,12 @@ const applyGradientToSelection = (editor: Editor, gradientColor: string) => {
 };
 
 export const ColorPalette = ({ editor }: { editor: Editor }) => {
-  const [colors, setColors] = useState<string[]>([
-    "rgba(255, 255, 255, 1",
-    "rgba(0, 195, 255, 1)",
-    "rgba(0, 218, 0, 1)",
-    "rgba(255, 152, 67, 1)",
-    "rgba(244, 130, 255, 1)",
-    "linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%)",
-    "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%)",
-    "linear-gradient(90deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%)"
-  ]);
+  const { colors, addColor, removeColor } = usePersistedColors();
   const [color, setColor] = useState<string>("#FFFFFF33");
+
+  const handleAddColor = () => {
+    addColor(color);
+  };
 
   return (
     <div className="flex gap-2 items-center flex-wrap">
@@ -98,11 +110,13 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
       <ColorButton onClick={() => Editor.removeMark(editor, "color")}>
         ✕
       </ColorButton>
-      {colors.map((color, idx) => (
+      {colors.map((colorItem, idx) => (
         <TextColorButton
-          key={`${color}_${idx}`}
-          color={color}
+          key={`${colorItem}_${idx}`}
+          color={colorItem}
           editor={editor}
+          onRemove={() => removeColor(idx)}
+          canRemove={idx >= DEFAULT_COLORS.length}
         />
       ))}
       <Popover className="relative">
@@ -132,7 +146,7 @@ export const ColorPalette = ({ editor }: { editor: Editor }) => {
           />
           <button
             className="w-full px-3 py-2 rounded-md text-sm bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors mt-3"
-            onClick={() => setColors([...colors, color])}
+            onClick={handleAddColor}
           >
             Add Color
           </button>
