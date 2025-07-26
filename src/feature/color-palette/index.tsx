@@ -14,7 +14,7 @@ const ColorButton = ({
   return (
     <button
       {...props}
-      className="w-7 h-7 rounded border border-gray-600/50 bg-gray-700/30 flex items-center justify-center cursor-pointer hover:bg-gray-600/40 transition-colors text-xs"
+      className="w-7 h-7 rounded border border-gray-600 bg-gray-700/30 flex items-center justify-center cursor-pointer hover:bg-gray-600/40 transition-colors text-xs"
     >
       {children}
     </button>
