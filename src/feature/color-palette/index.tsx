@@ -3,7 +3,7 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ButtonHTMLAttributes, useState } from "react";
 import ColorPicker from "react-best-gradient-color-picker";
-import { Editor, Range, Transforms } from "slate";
+import { Editor, Range, Transforms, Text, Element, Node } from "slate";
 import { isGradient, generateGradientColors } from "./color";
 import { DEFAULT_COLORS, usePersistedColors } from "./storage";
 
@@ -74,26 +74,69 @@ const applyGradientToSelection = (editor: Editor, gradientColor: string) => {
     return; // 没有选中内容，直接返回
   }
 
-  // 获取选中的文本
-  const selectedText = Editor.string(editor, editor.selection);
+  // 获取选中区域的片段
+  const fragment = Editor.fragment(editor, editor.selection);
+  
+  // 收集所有文本字符和节点信息
+  const processedNodes: Node[] = [];
+  const allTextChars: string[] = [];
+  
+  const processNode = (node: Node): void => {
+    if (Text.isText(node)) {
+      // 收集文本字符用于生成渐变色
+      allTextChars.push(...node.text.split(''));
+      processedNodes.push(node);
+    } else if (Element.isElement(node) && 'type' in node && node.type === 'icon') {
+      // 保存图标节点
+      processedNodes.push(node);
+    } else if (Element.isElement(node) && node.children) {
+      // 递归处理子节点
+      node.children.forEach(processNode);
+    }
+  };
 
-  if (!selectedText) {
+  // 处理片段中的所有节点
+  fragment.forEach(processNode);
+
+  if (allTextChars.length === 0) {
     return; // 没有文本内容，直接返回
   }
 
   // 使用 generateGradientColors 生成颜色数组
-  const colors = generateGradientColors(gradientColor, selectedText.length);
+  const colors = generateGradientColors(gradientColor, allTextChars.length);
+
+  // 重新构建节点，为文本应用渐变，保持图标不变
+  const newNodes: Node[] = [];
+  let colorIndex = 0;
+
+  const rebuildNode = (node: Node): void => {
+    if (Text.isText(node)) {
+      // 为文本节点的每个字符应用渐变色
+      const textChars = node.text.split('');
+      textChars.forEach((char: string) => {
+        newNodes.push({
+          text: char,
+          color: colors[colorIndex],
+        } as Node);
+        colorIndex++;
+      });
+    } else if (Element.isElement(node) && 'type' in node && node.type === 'icon') {
+      // 保持图标节点不变
+      newNodes.push(node);
+    } else if (Element.isElement(node) && node.children) {
+      // 递归处理子节点
+      node.children.forEach(rebuildNode);
+    }
+  };
+
+  // 重建所有节点
+  fragment.forEach(rebuildNode);
 
   // 删除选中的内容
   Transforms.delete(editor);
 
-  // 为每个字符创建带有颜色标记的文本节点并插入
-  const textNodes = selectedText.split("").map((char, index) => ({
-    text: char,
-    color: colors[index],
-  }));
-
-  Transforms.insertNodes(editor, textNodes);
+  // 插入新的节点
+  Transforms.insertNodes(editor, newNodes);
 };
 
 export const ColorPalette = ({ editor }: { editor: Editor }) => {
