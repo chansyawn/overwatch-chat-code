@@ -2,7 +2,7 @@
 
 import { ChatCodeEditor } from "@/feature/editor";
 import { ColorPalette } from "@/feature/color-palette";
-import { CHANNEL_COLOR, ChannelPicker, OverwatchChannel } from "@/feature/channel";
+import { ChannelPicker, OverwatchChannel } from "@/feature/channel";
 import { IconSelector } from "@/feature/icon-picker";
 import { ChatCodePreview } from "@/feature/preview";
 import { useState, useMemo, useCallback } from "react";
@@ -51,25 +51,25 @@ export default function App() {
         Transforms.delete(editor, {
           at: {
             anchor: point,
-            focus: Editor.end(editor, [])
-          }
+            focus: Editor.end(editor, []),
+          },
         });
-        
+
         // 插入模板内容
         if (templateContent.length > 0) {
           Transforms.insertNodes(editor, templateContent, { at: [0] });
         } else {
           // 如果没有模板内容，插入一个空段落
           Transforms.insertNodes(editor, {
-            type: 'paragraph',
-            children: [{ text: '' }]
+            type: "paragraph",
+            children: [{ text: "" }],
           });
         }
-        
+
         // 将光标移动到开始位置
         Transforms.select(editor, { path: [0, 0], offset: 0 });
       });
-      
+
       // 调用 setValue 来更新外部状态
       setValue(templateContent);
     },
@@ -81,22 +81,22 @@ export default function App() {
       <main className="flex flex-col items-center mx-auto container flex-grow">
         <div className="text-center mb-8">
           <h1 className="text-3xl text-white font-semibold mb-2">
-            Overwatch Chat Code
+            Overwatch Chat Code Generator
           </h1>
           <p className="text-gray-400 text-sm">
             Create chat messages with colors and icons
           </p>
         </div>
-        
+
         <div className="w-full">
           <div className="flex gap-6">
             <div className="w-1/3 space-y-4 flex-shrink-0">
               <ChannelPicker value={channel} onChange={setChannel} />
               <ColorPalette editor={editor} />
               <div className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64">
-                <ChatCodeEditor 
-                  value={value} 
-                  onChange={setValue} 
+                <ChatCodeEditor
+                  value={value}
+                  onChange={setValue}
                   editor={editor}
                   channel={channel}
                 />

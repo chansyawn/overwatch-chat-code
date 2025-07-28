@@ -16,8 +16,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Overwatch Chat Code",
-  description: "Create chat messages with colors and icons",
+  title: "Overwatch Chat Code Generator",
+  description:
+    "Create chat messages with colors and icons. Free online tool to create custom Overwatch chat messages with colors, icons and special formatting.",
+  keywords: [
+    "Overwatch",
+    "Chat",
+    "Code",
+    "Generator",
+    "Colors",
+    "Icons",
+    "Emoji",
+  ],
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
