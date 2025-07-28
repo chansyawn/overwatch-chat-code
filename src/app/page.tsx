@@ -77,23 +77,23 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen px-4 py-8 flex flex-col">
+    <div className="min-h-screen px-2 sm:px-4 py-4 sm:py-8 flex flex-col">
       <main className="flex flex-col items-center mx-auto container flex-grow">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl text-white font-semibold mb-2">
+        <div className="text-center mb-4 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl text-white font-semibold mb-2">
             Overwatch Chat Code Generator
           </h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm">
             Create chat messages with colors and icons
           </p>
         </div>
 
         <div className="w-full">
-          <div className="flex gap-6">
-            <div className="w-1/3 space-y-4 flex-shrink-0">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6">
+            <div className="w-full lg:w-1/3 space-y-3 sm:space-y-4 lg:flex-shrink-0">
               <ChannelPicker value={channel} onChange={setChannel} />
               <ColorPalette editor={editor} />
-              <div className="w-full bg-gray-800/30 border border-gray-700/50 p-4 rounded-lg min-h-64">
+              <div className="w-full bg-gray-800/30 border border-gray-700/50 p-3 sm:p-4 rounded-lg min-h-48 sm:min-h-64">
                 <ChatCodeEditor
                   value={value}
                   onChange={setValue}
@@ -107,16 +107,16 @@ export default function App() {
                 onApplyTemplate={handleApplyTemplate}
               />
             </div>
-            <div className="w-2/3">
+            <div className="w-full lg:w-2/3">
               <IconSelector editor={editor} />
             </div>
           </div>
         </div>
       </main>
-      <footer className="mt-8 pt-8 border-t border-gray-700">
+      <footer className="mt-4 sm:mt-8 pt-4 sm:pt-8 border-t border-gray-700">
         <div className="text-center">
-          <p className="text-gray-400 text-sm mb-4">Thanks to:</p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm mb-2 sm:mb-4">Thanks to:</p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 text-xs sm:text-sm">
             <a
               href="https://www.reddit.com/r/Overwatch/comments/1m7xf3i/list_of_chat_emojis_ive_found_so_far"
               target="_blank"
