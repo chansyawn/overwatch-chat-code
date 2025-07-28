@@ -83,11 +83,17 @@ export default function App() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl text-white font-semibold mb-2">
             Overwatch Chat Code Generator
           </h1>
-          <p className="text-gray-400 text-xs sm:text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm mb-2">
             Create chat messages with colors and icons
           </p>
+          <p className="text-yellow-400 text-xs sm:text-sm font-semibold mb-2">
+            Please do not abuse chat codes (e.g., impersonating official/system
+            messages or tricking others to leave the game).
+          </p>
+          <p className="text-orange-400 text-xs sm:text-sm font-semibold mb-2">
+            And these codes may affect the experience of players using TTS.
+          </p>
         </div>
-
         <div className="w-full">
           <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6">
             <div className="w-full lg:w-1/3 space-y-3 sm:space-y-4 lg:flex-shrink-0">
