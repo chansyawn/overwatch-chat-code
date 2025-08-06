@@ -5,7 +5,7 @@ import { ColorPalette } from "@/feature/color-palette";
 import { ChannelPicker, OverwatchChannel } from "@/feature/channel";
 import { IconSelector } from "@/feature/icon-picker";
 import { ChatCodePreview } from "@/feature/preview";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Descendant, createEditor, Editor, Transforms } from "slate";
 import { withReact } from "slate-react";
 import { withHistory } from "slate-history";
@@ -36,18 +36,11 @@ export default function App() {
   const [channel, setChannel] = useState<OverwatchChannel>(
     OverwatchChannel.All
   );
-  const [isChineseUser, setIsChineseUser] = useState(false);
 
   const editor = useMemo(
     () => withInline(withReact(withHistory(createEditor()))),
     []
   );
-
-  // 检测用户语言
-  useEffect(() => {
-    const userLanguage = navigator.language || navigator.languages?.[0] || "en";
-    setIsChineseUser(userLanguage.startsWith("zh"));
-  }, []);
 
   const handleApplyTemplate = useCallback(
     (templateContent: Descendant[]) => {
@@ -90,28 +83,9 @@ export default function App() {
           <h1 className="text-xl sm:text-2xl lg:text-3xl text-white font-semibold mb-2">
             Overwatch Chat Code Generator
           </h1>
-          <p className="text-gray-400 text-xs sm:text-sm mb-2">
-            Create chat messages with colors and icons
-            {isChineseUser && (
-              <span className="text-blue-400 text-xs sm:text-sm font-semibold ml-2">
-                国服玩家可以使用{" "}
-                <a
-                  href="https://ow.mapleqaq.top/"
-                  target="_blank"
-                  className="underline hover:text-blue-300"
-                >
-                  ow.mapleqaq.top
-                </a>{" "}
-                功能更全面
-              </span>
-            )}
-          </p>
-          <p className="text-yellow-400 text-xs sm:text-sm font-semibold mb-2">
-            Please do not abuse chat codes (e.g., impersonating official/system
-            messages or tricking others to leave the game).
-          </p>
-          <p className="text-orange-400 text-xs sm:text-sm font-semibold mb-2">
-            And these codes may affect the experience of players using TTS.
+          <p className="text-green-400 text-lg font-semibold mb-2 border-2 border-green-400 rounded-lg p-3 bg-green-400/10">
+            😭 This bug was fixed by Blizzard on 2025/8/5. Hope it returns as an
+            official feature one day! 😭
           </p>
         </div>
         <div className="w-full">
